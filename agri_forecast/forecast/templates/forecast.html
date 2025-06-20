@@ -1,0 +1,342 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agriculture Commodity Forecast</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="{% static 'images/logo.png' %}">
+
+  <!-- Bootstrap & Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet"/>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #ffffff;
+      color: #000000;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #ffffff;
+    }
+
+    .sidebar {
+      height: 100vh;
+      width: 70px;
+      background-color: #2c5e1a;
+      padding-top: 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      text-align: center;
+      transition: width 0.3s;
+      overflow-x: hidden;
+      z-index: 1000;
+    }
+
+    .sidebar:hover {
+      width: 140px;
+    }
+
+    .sidebar .menu-toggle img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 40px;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .sidebar ul li {
+      margin: 20px 0;
+    }
+
+    .sidebar ul li a {
+      text-decoration: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+
+    .sidebar:hover ul li a {
+      flex-direction: row;
+      justify-content: flex-start;
+      padding-left: 20px;
+    }
+
+    .sidebar ul li a i {
+      font-size: 20px;
+    }
+
+    .sidebar ul li a span {
+      margin-left: 10px;
+      display: none;
+      font-weight: 500;
+    }
+
+    .sidebar:hover ul li a span {
+      display: inline;
+    }
+
+    .main-content {
+      margin-left: 70px;
+      transition: margin-left 0.3s;
+    }
+
+    .sidebar:hover ~ .main-content {
+      margin-left: 140px;
+    }
+
+    .header {
+      background: #2c5e1a;
+      color: #fff;
+      padding: 15px 60px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: 600;
+      position: relative;
+      z-index: 999;
+    }
+
+    body.dark-mode .header,
+    body.dark-mode .footer,
+    body.dark-mode .sidebar,
+    body.dark-mode .sidebar:hover {
+      background-color: #000000;
+      color: #ffffff;
+    }
+
+    .carousel-inner img {
+      width: 100%;
+      height: 500px;
+      object-fit: cover;
+    }
+
+    @media (max-width: 768px) {
+      .carousel-inner img {
+        height: 350px;
+      }
+    }
+
+    .quote-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 10px 20px;
+      font-size: 20px;
+      font-weight: 600;
+      text-align: center;
+      border-radius: 10px;
+      max-width: 80%;
+    }
+
+    .quote-author {
+      display: block;
+      font-size: 16px;
+      font-weight: 400;
+      margin-top: 10px;
+      color: #f4a261;
+    }
+
+    .container {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      color: #2c5e1a;
+      font-size: 28px;
+    }
+
+    body.dark-mode h1 {
+      color: #f4a261;
+    }
+
+    hr {
+      color: #000000;
+    }
+
+    body.dark-mode hr {
+      color: #ffffff;
+    }
+
+    p {
+      font-size: 18px;
+      margin-bottom: 30px;
+      color: #000000;
+    }
+
+    body.dark-mode p {
+      color: black;
+    }
+    
+    .btn-custom {
+      background: #2c5e1a;
+      color: #fff;
+      padding: 12px 20px;
+      font-size: 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .btn-custom:hover {
+      background: #1d3f12;
+    }
+
+    .footer {
+      background: #2c5e1a;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      margin-top: 50px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="menu-toggle">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" />
+    </div>
+
+    <ul>
+      <li><a href="{% url 'home' %}"><i class="bi bi-house-door"></i><span>Home</span></a></li>
+      <li><a href="{% url 'forecast' %}"><i class="bi bi-graph-up-arrow"></i><span>Forecast</span></a></li>
+      <li><a href="javascript:void(0)" onclick="toggleTheme()"><i id="theme-icon" class="bi"></i><span>Theme</span></a></li>
+      <li><a href="#"><i class="bi bi-gear"></i><span>Settings</span></a></li>
+    </ul>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="header">
+      Agriculture Commodity Price Forecast
+    </div> 
+
+    <div>
+        <br>
+        <ol class="lh-base">
+          <h2 class="mb-3"> Forecasting Process Overview</h2>
+          <ul>
+            <li><strong>Upload Your Data:</strong> Excel file with <code>Date</code>, <code>Commodity</code>, and <code>Price</code> columns.</li>
+            <li><strong>Data Preprocessing:</strong> Cleans, sorts, fills missing values, and converts to time series.</li>
+            <li><strong>Exploratory Data Analysis (EDA):</strong> Trend plots and correlation heatmaps.</li>
+            <li><strong>Model Training & Forecasting:</strong> Uses ARIMA and SARIMA to predict future prices.</li>
+            <li><strong>Future Forecast:</strong> Projects prices for the next 30 months.</li>
+            <li><strong>Results:</strong> Visual charts, Root Mean Square Error (RMSE) scores, and forecast tables.</li>
+          </ul>
+        </ol>
+    </div>
+
+    <div class="container mt-5">
+        <form method="POST" enctype="multipart/form-data" class="p-4 rounded shadow-sm bg-light">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="fileInput" class="form-label fw-bold">Upload Excel File</label>
+              <input class="form-control" type="file" id="fileInput" name="file" accept=".xlsx,.xls" required>
+              <div class="form-text text-muted">Make sure the file has columns: <strong>Date</strong>, <strong>Commodity</strong>, and <strong>Price</strong>.</div>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Generate Forecast</button>
+        </form>  
+        
+        <br>
+
+        {% if error %}
+          <div class="alert alert-danger">{{ error }}</div>
+        {% endif %}
+      
+        {% if commodity_trend_chart %}
+        <h1>Exploratory Data Analysis</h1>
+        <br>
+          <h4>Commodity Trends</h4>
+          <img src="data:image/png;base64,{{ commodity_trend_chart }}" class="img-fluid mb-4"/>
+        {% endif %}
+      
+        {% if correlation_chart %}
+          <h4>Feature Correlation Matrix</h4>
+          <img src="data:image/png;base64,{{ correlation_chart }}" class="img-fluid mb-4"/>
+        {% endif %}
+      
+        {% for forecast in forecasts %}
+          <div class="card mb-4">
+            <div class="card-header">
+              <h5 class="btn btn-success w-100">{{ forecast.commodity }}</h5>
+              <p> Root Mean Square Error (ARIMA): {{ forecast.rmse_arima }} </p>
+              <p> Root Mean Square Error (SARIMA): {{ forecast.rmse_sarima }}</p>
+            </div>
+            <div class="card-body">
+              <img src="data:image/png;base64,{{ forecast.chart }}" class="img-fluid mb-3"/>
+              <h6>Future Forecast for 30 Months</h6>
+              {{ forecast.future_df|safe }}
+            </div>
+          </div>
+        {% endfor %}
+
+      </div>
+
+    <div class="footer">
+      &copy; 2025 Agriculture Price Forecasting
+    </div>
+
+  <!-- Theme Toggle Script -->
+  <script>
+    function applyTheme(isDarkMode) {
+      const body = document.body;
+      const themeIcon = document.getElementById('theme-icon');
+
+      if (isDarkMode) {
+        body.classList.add('dark-mode');
+        themeIcon.classList.remove('bi-sun');
+        themeIcon.classList.add('bi-moon');
+      } else {
+        body.classList.remove('dark-mode');
+        themeIcon.classList.remove('bi-moon');
+        themeIcon.classList.add('bi-sun');
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = !document.body.classList.contains('dark-mode');
+      applyTheme(isDark);
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const storedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (storedTheme === 'dark') {
+        applyTheme(true);
+      } else if (storedTheme === 'light') {
+        applyTheme(false);
+      } else {
+        applyTheme(prefersDark);
+      }
+    });
+  </script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
